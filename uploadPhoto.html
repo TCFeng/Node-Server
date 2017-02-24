@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Upload File</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="/scripts/faceDetection.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/pure-min.css" integrity="sha384-UQiGfs9ICog+LwheBSRCt1o5cbyKIHbwjWscjemyBMT9YCUMZffs6UqUTd0hObXD"
+        crossorigin="anonymous">
+</head>
+
+<body>
+    <form enctype="multipart/form-data" method="post" class="pure-form">
+        <fieldset>
+            <legend>Upload File</legend>
+            <input id="photoImage" type="file" class="pure-button pure-button-primary" accept="image/*" />
+        </fieldset>
+        <fieldset>
+            <legend>Dectet</legend>
+            <input type="button" id="detect" value="Detect">
+        </fieldset>
+        <fieldset>
+        <legend>Show answer : </legend>
+        <div>
+            <p id="response"></p>
+        </div>
+        </fieldset>
+        <div>
+            <canvas id="myCanvas" width="1000" height="800">
+                Your browser does not support the HTML5 canvas tag.
+            </canvas>
+        </div>
+    </form>
+</body>
+
+</html>
