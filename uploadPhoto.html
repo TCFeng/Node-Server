@@ -6,30 +6,21 @@
     <title>Upload File</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="/scripts/faceDetection.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/pure-min.css" integrity="sha384-UQiGfs9ICog+LwheBSRCt1o5cbyKIHbwjWscjemyBMT9YCUMZffs6UqUTd0hObXD"
-        crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+            crossorigin="anonymous">
 </head>
 
 <body>
-    <form enctype="multipart/form-data" method="post" class="pure-form">
-        <fieldset>
-            <legend>Upload File</legend>
-            <input id="photoImage" type="file" class="pure-button pure-button-primary" accept="image/*" />
-        </fieldset>
-        <fieldset>
-            <legend>Dectet</legend>
-            <input type="button" id="detect" value="Detect">
-        </fieldset>
-        <fieldset>
-        <legend>Show answer : </legend>
-        <div>
-            <p id="response"></p>
+    <form enctype="multipart/form-data" method="post">
+        <div class="form-group">
+            <label>Upload File</label>
+            <input id="photoImage" name="photoImage" type="file" accept="image/*" />
         </div>
-        </fieldset>
-        <div>
-            <canvas id="myCanvas" width="1000" height="800">
-                Your browser does not support the HTML5 canvas tag.
-            </canvas>
+        <div class="form-group">
+            <label>Dectet</label>
+            <input type="button" id="detect" value="Detect">
         </div>
     </form>
 </body>

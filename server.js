@@ -1,14 +1,17 @@
 const express = require('express');
-var expressWs = require('express-ws')(express());
+const expressWs = require('express-ws')(express());
 const path = require('path');
 const http = require('http');
+const fs = require('fs');
 
 const port = process.env.PORT || 8080;
-var app = expressWs.app;
-
-
+const app = expressWs.app;
+const wss = expressWs.getWss('/webSocket');
+const bodyParser = require('body-parser')
 
 app.use("/scripts", express.static(__dirname + '/scripts'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/uploadPhoto', (req, res) => {
     res.sendFile(path.join(`${__dirname}/uploadPhoto.html`));
@@ -18,15 +21,15 @@ app.get('/showStatus', (req, res) => {
     res.sendFile(path.join(`${__dirname}/showStatus.html`));
 });
 
-var wss = expressWs.getWss('/webSocket');
 
-app.get('/getServerPushInfo', (req, res) => {
 
+
+app.post('/getServerPushInfo', (req, res) => {
     wss.clients.forEach(function (client) {
-        client.send('hello');
+        client.send(JSON.stringify(req.body));
     });
-     res.json({
-       'msg':'Success!!'
+    res.json({
+        'msg': 'Success!!'
     });
 });
 
@@ -34,12 +37,28 @@ app.ws('/webSocket', function (ws, req) {
     console.log('socket', '...');
 });
 
-app.get('/api', (req, res) => {
-    res.json({
-        a: 1,
-        b: 2,
-        c: 3
-    });
+//Temp Test
+app.post('/getImageInfo', (req, res) => {
+
+    var content = '';
+    var image = '';
+
+    if (req.headers['content-type'] === 'application/octet-stream') {
+
+        var data = '';
+        req.setEncoding('binary');
+
+        req.on('data', function (chunk) {
+            data += chunk;
+        });
+        req.on('end', function () {
+            var buf = new Buffer(data, 'binary');
+             res.json({
+                'msg': buf.toString('base64')
+            });
+        });
+
+    }
 });
 
 app.listen(port, () => {
