@@ -9,7 +9,6 @@ $().ready(function () {
         
         $.ajax({
             url: "https://us-central1-polar-terminal-159303.cloudfunctions.net/helloHttp",
-            //url: "http://127.0.0.1:8080/getImageInfo",
             beforeSend: function (xhrObj) {
                 xhrObj.setRequestHeader("Content-Type", "application/octet-stream");
                 $("#response").text("Calling api...");
