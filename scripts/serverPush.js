@@ -23,7 +23,7 @@ $(function () {
     }
 
     // open connection
-    var connection = new WebSocket('ws://127.0.0.1:8080/webSocket');
+    var connection = new WebSocket('ws://'+location.host+'/webSocket');
 
     connection.onopen = function () {
         console.log("Connection Open...");
