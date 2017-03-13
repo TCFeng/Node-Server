@@ -6,7 +6,7 @@ $().ready(function () {
     });
 
     function detectFaces(file) {
-        
+        $("#response").text('');
         $.ajax({
             url: "https://us-central1-polar-terminal-159303.cloudfunctions.net/helloHttp",
             beforeSend: function (xhrObj) {
@@ -29,7 +29,8 @@ $().ready(function () {
     }
 
     function processResult(response) {
-        console.log(response.msg);
+        console.log(response);
+        $("#response").text(response);
     }
 
 });

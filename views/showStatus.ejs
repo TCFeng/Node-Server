@@ -17,13 +17,13 @@
 <body>
     <div class="row">
         <div class="col-sm-3">
-            <table id="detHistoryTable">
-                <data-pagination-pre-text="Previous" data-pagination-next-text="Next" data-pagination-last-text="Last" data-height="500">
+            <table id="detHistoryTable" data-pagination="true" data-page-size="10" data-pagination-pre-text="Previous" data-pagination-next-text="Next" data-pagination-last-text="Last" data-height="500">
                     <thead>
                         <tr>
                             <th data-field="seq">Seq</th>
                             <th data-field="date">Date</th>
                             <th data-field="sex">Sex</th>
+                            <th data-field="age">Age</th>
                         </tr>
                     </thead>
             </table>
@@ -54,7 +54,7 @@ var $table = $('#detHistoryTable');
     }
 
     // open connection
-    var connection = new WebSocket('ws://<%= externalIp %>/webSocket');
+    var connection = new WebSocket('ws://<%= externalIp %>:65080/webSocket');
 
     connection.onopen = function () {
         console.log("Connection Open...");
@@ -70,7 +70,8 @@ var $table = $('#detHistoryTable');
         var imageInfo = {
             'seq': tableIndex++,
             'date': now.toLocaleString(),
-            'sex': imageJobj.textPayload[0].faceAttributes.gender
+            'sex': imageJobj[0].faceAttributes.gender,
+            'age': imageJobj[0].faceAttributes.age
         }
 
 
@@ -87,7 +88,7 @@ var $table = $('#detHistoryTable');
 
     function showImage(imageJobj) {
 
-        var imageBase64 = imageJobj.raw_image
+        var imageBase64 = imageJobj[0].raw_image
 
         var canvas = document.getElementById("photoImage");
         var context = canvas.getContext("2d");
@@ -105,12 +106,12 @@ var $table = $('#detHistoryTable');
         
         image.onload = function () {
             context.drawImage(image, 0, 0);
-            detectFace(imageJobj.textPayload)
+            detectFace(imageJobj)
         }
     }
 
-    function detectFace(textPayload) {
-        var arrayLength = textPayload.length;
+    function detectFace(imageJobj) {
+        var arrayLength = imageJobj.length;
 
         if (arrayLength > 0) {
             var canvas = document.getElementById('photoImage');
@@ -118,7 +119,7 @@ var $table = $('#detHistoryTable');
             context.beginPath();
 
             for (var i = 0; i < arrayLength; i++) {
-                var faceRectangle = textPayload[i].faceRectangle;
+                var faceRectangle = imageJobj[i].faceRectangle;
                 context.rect(faceRectangle.left, faceRectangle.top, faceRectangle.width, faceRectangle.height);
             }
 

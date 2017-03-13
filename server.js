@@ -11,6 +11,9 @@ const app = expressWs.app;
 const wss = expressWs.getWss('/webSocket');
 const bodyParser = require('body-parser');
 
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+
 app.set('view engine', 'ejs');
 app.use("/scripts", express.static(__dirname + '/scripts'));
 app.use(bodyParser.json());
@@ -21,7 +24,6 @@ app.get('/uploadPhoto', (req, res) => {
 });
 
 app.get('/showStatus', (req, res) => {
-    //res.sendFile(path.join(`${__dirname}/showStatus.html`));
     getExternalIp((externalIp) => {
         res.render('showStatus', { externalIp: externalIp });
     });
@@ -51,9 +53,7 @@ function getExternalIp(cb) {
 
 
 app.post('/getServerPushInfo', (req, res) => {
-    console.log("Size",wss.clients.size);
     wss.clients.forEach(function (client) {
-        console.log("===",client._isServer);
         client.send(JSON.stringify(req.body));
     });
     res.json({
