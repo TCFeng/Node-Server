@@ -98,7 +98,7 @@ app.post('/getImageInfo', (req, res) => {
 
 http.createServer(app).listen(port, () => {
     console.log(`App listening on port ${port}`);
-    console.log('Press Ctrl+C to quit.');
+    console.log('Press Ctrl+C to quit!');
 });
 
 
