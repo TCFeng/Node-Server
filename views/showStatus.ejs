@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Show Status</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/locale/bootstrap-table-zh-TW.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+            crossorigin="anonymous">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.css">
+</head>
+
+<body>
+    <div class="row">
+        <div class="col-sm-3">
+            <table id="detHistoryTable" data-pagination="true" data-page-size="10" data-pagination-pre-text="Previous" data-pagination-next-text="Next" data-pagination-last-text="Last" data-height="500">
+                    <thead>
+                        <tr>
+                            <th data-field="seq">Seq</th>
+                            <th data-field="date">Date</th>
+                            <th data-field="sex">Sex</th>
+                            <th data-field="age">Age</th>
+                        </tr>
+                    </thead>
+            </table>
+        </div>
+        <div class="col-sm-9">
+            <canvas id="photoImage" width="800" height="600">
+                Your browser does not support the HTML5 canvas tag.
+            </canvas>
+        </div>
+    </div>
+
+</body>
+
+<script>
+
+var $table = $('#detHistoryTable');
+    var tableIndex = 1;
+    var data = []
+    $table.bootstrapTable({data: data});
+
+
+    // if user is running mozilla then use it's built-in WebSocket
+    window.WebSocket = window.WebSocket || window.MozWebSocket;
+
+    // if browser doesn't support WebSocket, just show some notification and exit
+    if (!window.WebSocket) {
+        
+    }
+
+    // open connection
+    var connection = new WebSocket('ws://<%= externalIp %>:65080/webSocket');
+
+    connection.onopen = function () {
+        console.log("Connection Open...");
+    }
+
+    connection.onerror = function (error) {
+        console.log("Connection Error!");
+    }
+
+    connection.onmessage = function (message) {
+        var now = new Date();
+        var imageJobj = JSON.parse(message.data);
+        var imageInfo = {
+            'seq': tableIndex++,
+            'date': now.toLocaleString(),
+            'sex': imageJobj[0].faceAttributes.gender,
+            'age': imageJobj[0].faceAttributes.age
+        }
+
+
+        $table.bootstrapTable('prepend', imageInfo);
+        showImage(imageJobj);
+    };
+
+
+    setInterval(function() {
+        if (connection.readyState !== 1) {
+            console.log('Unable to comminucate with the WebSocket server.')
+        }
+    }, 3000);
+
+    function showImage(imageJobj) {
+
+        var imageBase64 = imageJobj[0].raw_image
+
+        var canvas = document.getElementById("photoImage");
+        var context = canvas.getContext("2d");
+        
+        var image = new Image();
+
+        image.src = 'data:image/jpeg;base64,'+ imageBase64;
+
+        var width = image.naturalWidth; 
+        var height = image.naturalHeight; 
+        
+        canvas.width = width;
+        canvas.height = height;
+
+        
+        image.onload = function () {
+            context.drawImage(image, 0, 0);
+            detectFace(imageJobj)
+        }
+    }
+
+    function detectFace(imageJobj) {
+        var arrayLength = imageJobj.length;
+
+        if (arrayLength > 0) {
+            var canvas = document.getElementById('photoImage');
+            var context = canvas.getContext('2d');
+            context.beginPath();
+
+            for (var i = 0; i < arrayLength; i++) {
+                var faceRectangle = imageJobj[i].faceRectangle;
+                context.rect(faceRectangle.left, faceRectangle.top, faceRectangle.width, faceRectangle.height);
+            }
+
+            context.lineWidth = 3;
+            context.strokeStyle = 'red';
+            context.stroke();
+        }
+    }
+
+
+
+</script>
+
+</html>
